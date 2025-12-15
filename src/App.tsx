@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { PortfolioProvider } from './context/PortfolioContext';
 
 // Pages
 import { LandingPage } from './pages/LandingPage';
@@ -8,6 +9,9 @@ import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 import { DashboardPage } from './pages/dashboard/DashboardPage';
 import { OnboardingPage } from './pages/onboarding/OnboardingPage';
+import { ETFDatabasePage } from './pages/etfs/ETFDatabasePage';
+import { ETFDetailPage } from './pages/etfs/ETFDetailPage';
+import { TransactionsPage } from './pages/transactions/TransactionsPage';
 
 // Protected Route component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -112,6 +116,36 @@ function AppRoutes() {
         }
       />
 
+      {/* ETF Database */}
+      <Route
+        path="/etfs"
+        element={
+          <ProtectedRoute>
+            <ETFDatabasePage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ETF Detail */}
+      <Route
+        path="/etfs/:isin"
+        element={
+          <ProtectedRoute>
+            <ETFDetailPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Transactions */}
+      <Route
+        path="/transactions"
+        element={
+          <ProtectedRoute>
+            <TransactionsPage />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Admin routes - TODO: implement */}
       <Route
         path="/admin/*"
@@ -137,7 +171,9 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <AppRoutes />
+        <PortfolioProvider>
+          <AppRoutes />
+        </PortfolioProvider>
       </AuthProvider>
     </Router>
   );

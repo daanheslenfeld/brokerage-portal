@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogOut, Settings, PieChart } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings, PieChart, Search, History } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export function Header() {
@@ -62,6 +62,20 @@ export function Header() {
                   >
                     <PieChart className="w-4 h-4 mr-2" />
                     Dashboard
+                  </Link>
+                  <Link
+                    to="/etfs"
+                    className="text-gray-300 hover:text-primary transition-colors flex items-center"
+                  >
+                    <Search className="w-4 h-4 mr-2" />
+                    ETFs
+                  </Link>
+                  <Link
+                    to="/transactions"
+                    className="text-gray-300 hover:text-primary transition-colors flex items-center"
+                  >
+                    <History className="w-4 h-4 mr-2" />
+                    Transacties
                   </Link>
                   {user?.role === 'admin' && (
                     <Link
@@ -149,6 +163,22 @@ export function Header() {
                   >
                     <PieChart className="w-4 h-4 mr-2" />
                     Dashboard
+                  </Link>
+                  <Link
+                    to="/etfs"
+                    className="flex items-center text-gray-300 hover:text-primary transition-colors py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Search className="w-4 h-4 mr-2" />
+                    ETFs
+                  </Link>
+                  <Link
+                    to="/transactions"
+                    className="flex items-center text-gray-300 hover:text-primary transition-colors py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <History className="w-4 h-4 mr-2" />
+                    Transacties
                   </Link>
                   {user?.role === 'admin' && (
                     <Link

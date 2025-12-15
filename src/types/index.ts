@@ -165,6 +165,9 @@ export interface ETF {
   holdings: string;
   distribution: 'Accumulating' | 'Distributing';
   replication: string;
+  price?: number;
+  change1d?: number;
+  change1y?: number;
 }
 
 export interface PortfolioHolding {

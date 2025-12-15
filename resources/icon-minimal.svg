@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <!-- Main gradient -->
+    <linearGradient id="pigGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3DFCE0"/>
+      <stop offset="50%" style="stop-color:#28EBCF"/>
+      <stop offset="100%" style="stop-color:#1A9E8B"/>
+    </linearGradient>
+
+    <!-- Dark accent -->
+    <linearGradient id="darkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1A9E8B"/>
+      <stop offset="100%" style="stop-color:#147A6B"/>
+    </linearGradient>
+
+    <!-- Gold coin gradient -->
+    <linearGradient id="coinGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFE55C"/>
+      <stop offset="50%" style="stop-color:#FFD700"/>
+      <stop offset="100%" style="stop-color:#F0A500"/>
+    </linearGradient>
+
+    <!-- Glow filter -->
+    <filter id="coinGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="12"/>
+    </filter>
+  </defs>
+
+  <!-- Background with rounded corners for app icon -->
+  <rect width="1024" height="1024" rx="224" fill="#0D0D0D"/>
+
+  <!-- Ambient glow -->
+  <circle cx="512" cy="540" r="300" fill="#28EBCF" opacity="0.06"/>
+
+  <!-- Piggy body - simplified geometric shape -->
+  <ellipse cx="520" cy="550" rx="260" ry="200" fill="url(#pigGradient)"/>
+
+  <!-- Body shine -->
+  <ellipse cx="420" cy="480" rx="100" ry="60" fill="#fff" opacity="0.2"/>
+
+  <!-- Snout -->
+  <ellipse cx="300" cy="570" rx="70" ry="55" fill="url(#pigGradient)"/>
+  <ellipse cx="300" cy="570" rx="50" ry="40" fill="url(#darkGradient)"/>
+
+  <!-- Nostrils - simple dots -->
+  <circle cx="282" cy="565" r="10" fill="#0D0D0D" opacity="0.7"/>
+  <circle cx="318" cy="565" r="10" fill="#0D0D0D" opacity="0.7"/>
+
+  <!-- Ears - simplified triangles -->
+  <path d="M380 380 L340 300 L420 340 Z" fill="url(#pigGradient)"/>
+  <path d="M390 375 L365 325 L410 350 Z" fill="url(#darkGradient)"/>
+
+  <path d="M620 360 L680 290 L700 380 Z" fill="url(#pigGradient)"/>
+  <path d="M635 365 L670 320 L680 375 Z" fill="url(#darkGradient)"/>
+
+  <!-- Eyes - modern minimal style -->
+  <circle cx="400" cy="500" r="30" fill="#0D0D0D"/>
+  <circle cx="408" cy="492" r="10" fill="#fff"/>
+
+  <circle cx="550" cy="490" r="30" fill="#0D0D0D"/>
+  <circle cx="558" cy="482" r="10" fill="#fff"/>
+
+  <!-- Coin slot -->
+  <rect x="440" y="360" width="140" height="20" rx="10" fill="#0D0D0D"/>
+
+  <!-- Animated-looking coin with glow -->
+  <ellipse cx="510" cy="300" rx="45" ry="45" fill="#FFD700" opacity="0.3" filter="url(#coinGlow)"/>
+  <circle cx="510" cy="300" r="42" fill="url(#coinGradient)"/>
+  <circle cx="510" cy="300" r="32" fill="none" stroke="#F0A500" stroke-width="3"/>
+  <text x="510" y="315" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="36" font-weight="bold" fill="#B8860B">€</text>
+
+  <!-- Legs - minimal rectangles -->
+  <rect x="360" y="720" width="45" height="55" rx="12" fill="url(#darkGradient)"/>
+  <rect x="450" y="725" width="45" height="50" rx="12" fill="url(#darkGradient)"/>
+  <rect x="540" y="725" width="45" height="50" rx="12" fill="url(#darkGradient)"/>
+  <rect x="630" y="720" width="45" height="55" rx="12" fill="url(#darkGradient)"/>
+
+  <!-- Curly tail -->
+  <path d="M760 500 Q800 460 790 520 Q780 580 820 560"
+        fill="none" stroke="url(#pigGradient)" stroke-width="24" stroke-linecap="round"/>
+</svg>

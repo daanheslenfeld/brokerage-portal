@@ -7,9 +7,12 @@ import { OnboardingProvider, useOnboarding, OnboardingStep } from '../../context
 import { AccountTypeStep } from '../../components/onboarding/AccountTypeStep';
 import { PersonalDataStep } from '../../components/onboarding/PersonalDataStep';
 import { AddressStep } from '../../components/onboarding/AddressStep';
+import { IDVerificationStep } from '../../components/onboarding/IDVerificationStep';
+import { AddressProofStep } from '../../components/onboarding/AddressProofStep';
 import { TaxStatusStep } from '../../components/onboarding/TaxStatusStep';
 import { SourceOfFundsStep } from '../../components/onboarding/SourceOfFundsStep';
 import { InvestmentProfileStep } from '../../components/onboarding/InvestmentProfileStep';
+import { BankAccountStep } from '../../components/onboarding/BankAccountStep';
 import { AgreementStep } from '../../components/onboarding/AgreementStep';
 import { ReviewStep } from '../../components/onboarding/ReviewStep';
 import { CompletedStep } from '../../components/onboarding/CompletedStep';
@@ -45,12 +48,18 @@ function OnboardingContent() {
         return <PersonalDataStep />;
       case OnboardingStep.ADDRESS:
         return <AddressStep />;
+      case OnboardingStep.ID_VERIFICATION:
+        return <IDVerificationStep />;
+      case OnboardingStep.ADDRESS_PROOF:
+        return <AddressProofStep />;
       case OnboardingStep.TAX_STATUS:
         return <TaxStatusStep />;
       case OnboardingStep.SOURCE_OF_FUNDS:
         return <SourceOfFundsStep />;
       case OnboardingStep.INVESTMENT_PROFILE:
         return <InvestmentProfileStep />;
+      case OnboardingStep.BANK_ACCOUNT:
+        return <BankAccountStep />;
       case OnboardingStep.AGREEMENT:
         return <AgreementStep />;
       case OnboardingStep.REVIEW:

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="224" fill="#0A0B0D"/>
+
+  <!-- Ears -->
+  <circle cx="300" cy="280" r="70" fill="#28EBCF"/>
+  <circle cx="724" cy="280" r="70" fill="#28EBCF"/>
+
+  <!-- Main body - rounded square -->
+  <rect x="212" y="320" width="600" height="500" rx="80" fill="#28EBCF"/>
+
+  <!-- Eyes -->
+  <circle cx="380" cy="500" r="28" fill="#0A0B0D"/>
+  <circle cx="644" cy="500" r="28" fill="#0A0B0D"/>
+
+  <!-- Snout -->
+  <rect x="420" y="580" width="184" height="120" rx="60" fill="#1A9E8B"/>
+
+  <!-- Nostrils -->
+  <circle cx="472" cy="640" r="18" fill="#0A0B0D" opacity="0.5"/>
+  <circle cx="552" cy="640" r="18" fill="#0A0B0D" opacity="0.5"/>
+
+  <!-- Coin slot -->
+  <rect x="412" y="340" width="200" height="24" rx="12" fill="#0A0B0D"/>
+
+  <!-- Coin -->
+  <circle cx="512" cy="220" r="70" fill="#F5B800"/>
+  <circle cx="512" cy="220" r="52" fill="none" stroke="#D9A000" stroke-width="6"/>
+  <text x="512" y="245" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="#8B6914">€</text>
+</svg>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <!-- Primary gradient -->
+    <linearGradient id="pigFace" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3DFCE0"/>
+      <stop offset="100%" style="stop-color:#28EBCF"/>
+    </linearGradient>
+
+    <!-- Darker shade -->
+    <linearGradient id="pigDark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#28EBCF"/>
+      <stop offset="100%" style="stop-color:#1A9E8B"/>
+    </linearGradient>
+
+    <!-- Coin gradient -->
+    <linearGradient id="coin" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFE566"/>
+      <stop offset="100%" style="stop-color:#FFB800"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="224" fill="#0D0D0D"/>
+
+  <!-- Main face - circle -->
+  <circle cx="512" cy="540" r="300" fill="url(#pigFace)"/>
+
+  <!-- Ears -->
+  <ellipse cx="280" cy="340" rx="80" ry="100" fill="url(#pigFace)"/>
+  <ellipse cx="280" cy="340" rx="50" ry="65" fill="url(#pigDark)"/>
+
+  <ellipse cx="744" cy="340" rx="80" ry="100" fill="url(#pigFace)"/>
+  <ellipse cx="744" cy="340" rx="50" ry="65" fill="url(#pigDark)"/>
+
+  <!-- Eyes -->
+  <circle cx="380" cy="480" r="45" fill="#0D0D0D"/>
+  <circle cx="395" cy="465" r="16" fill="#fff"/>
+
+  <circle cx="644" cy="480" r="45" fill="#0D0D0D"/>
+  <circle cx="659" cy="465" r="16" fill="#fff"/>
+
+  <!-- Snout - center -->
+  <ellipse cx="512" cy="620" rx="110" ry="85" fill="url(#pigDark)"/>
+
+  <!-- Nostrils -->
+  <ellipse cx="465" cy="620" rx="22" ry="28" fill="#0D0D0D" opacity="0.6"/>
+  <ellipse cx="559" cy="620" rx="22" ry="28" fill="#0D0D0D" opacity="0.6"/>
+
+  <!-- Coin slot on top -->
+  <rect x="412" y="260" width="200" height="24" rx="12" fill="#0D0D0D"/>
+
+  <!-- Coin -->
+  <circle cx="512" cy="180" r="55" fill="url(#coin)"/>
+  <circle cx="512" cy="180" r="42" fill="none" stroke="#E6A800" stroke-width="4"/>
+  <text x="512" y="198" text-anchor="middle" font-family="system-ui, sans-serif" font-size="48" font-weight="900" fill="#996600">€</text>
+</svg>

@@ -1,5 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-  <rect width="48" height="48" rx="8" fill="#0A0B0D"/>
-  <path d="M 12 20 Q 12 14 18 14 L 30 14 Q 36 14 36 20 L 36 28 Q 36 34 30 34 L 18 34 Q 12 34 12 28 Z" fill="#28EBCF"/>
-  <text x="24" y="28" font-family="Arial" font-size="12" font-weight="bold" fill="#0A0B0D" text-anchor="middle">P</text>
+  <!-- Background -->
+  <rect width="48" height="48" rx="10" fill="#0A0B0D"/>
+
+  <!-- Ears -->
+  <circle cx="14" cy="13" r="4" fill="#28EBCF"/>
+  <circle cx="34" cy="13" r="4" fill="#28EBCF"/>
+
+  <!-- Main body -->
+  <rect x="10" y="15" width="28" height="24" rx="4" fill="#28EBCF"/>
+
+  <!-- Eyes -->
+  <circle cx="18" cy="24" r="2" fill="#0A0B0D"/>
+  <circle cx="30" cy="24" r="2" fill="#0A0B0D"/>
+
+  <!-- Snout -->
+  <rect x="19" y="29" width="10" height="6" rx="3" fill="#1A9E8B"/>
+
+  <!-- Nostrils -->
+  <circle cx="22" cy="32" r="1" fill="#0A0B0D" opacity="0.5"/>
+  <circle cx="26" cy="32" r="1" fill="#0A0B0D" opacity="0.5"/>
+
+  <!-- Coin slot -->
+  <rect x="19" y="17" width="10" height="2" rx="1" fill="#0A0B0D"/>
+
+  <!-- Coin -->
+  <circle cx="24" cy="9" r="5" fill="#F5B800"/>
+  <text x="24" y="11.5" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#8B6914">€</text>
 </svg>

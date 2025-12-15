@@ -42,10 +42,18 @@ export function InvestmentProfileStep() {
     watch,
     formState: { errors },
   } = useForm<InvestmentProfile>({
-    defaultValues: data.investmentProfile || {},
+    defaultValues: {
+      experience: '',
+      riskTolerance: '',
+      investmentGoals: [],
+      investmentHorizon: '',
+      knowledgeLevel: '',
+      ...data.investmentProfile,
+    },
   });
 
   const selectedRisk = watch('riskTolerance');
+  const selectedGoals = watch('investmentGoals') || [];
 
   const onSubmit = (formData: InvestmentProfile) => {
     updateData({ investmentProfile: formData });
@@ -160,7 +168,7 @@ export function InvestmentProfileStep() {
               <label
                 key={opt.value}
                 className={`p-3 border-2 rounded-lg cursor-pointer transition-all text-center ${
-                  watch('investmentGoals')?.includes(opt.value)
+                  Array.isArray(selectedGoals) && selectedGoals.includes(opt.value)
                     ? 'border-primary bg-primary/10'
                     : 'border-dark-border hover:border-gray-600'
                 }`}
