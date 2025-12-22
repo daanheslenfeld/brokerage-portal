@@ -51,7 +51,7 @@ export function AccountTypeStep() {
       {/* Account Type Selection */}
       <div className="space-y-4 mb-8">
         <label className="block text-sm font-medium text-gray-300 mb-3">
-          Ik open een rekening als:
+          Kies jouw rekening: particulier / zakelijk
         </label>
 
         <button

@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import type { OnboardingData, AccountType } from '../types';
+import React, { createContext, useContext, useState, useCallback, useRef, ReactNode } from 'react';
+import type { OnboardingData, AccountType, RiskAssessment, ComplianceResult } from '../types';
+import { calculateRiskScore } from '../utils/riskAssessment';
+import { submitOnboardingForCompliance, generateCustomerId } from '../services/compliance';
 
 // Onboarding steps
 export enum OnboardingStep {
@@ -13,12 +15,14 @@ export enum OnboardingStep {
   SOURCE_OF_FUNDS = 'source_of_funds',
   INVESTMENT_PROFILE = 'investment_profile',
   BANK_ACCOUNT = 'bank_account',
+  ENHANCED_DUE_DILIGENCE = 'enhanced_due_diligence',
   AGREEMENT = 'agreement',
   REVIEW = 'review',
   COMPLETED = 'completed',
 }
 
 // Steps for individual vs business
+// Full automated KYC/CDD flow
 export const INDIVIDUAL_STEPS = [
   OnboardingStep.ACCOUNT_TYPE,
   OnboardingStep.PERSONAL_DATA,
@@ -54,6 +58,9 @@ interface OnboardingContextType {
   accountType: AccountType | null;
   isLoading: boolean;
   error: string | null;
+  riskAssessment: RiskAssessment | null;
+  complianceResult: ComplianceResult | null;
+  customerId: string | null;
   setAccountType: (type: AccountType) => void;
   nextStep: () => void;
   prevStep: () => void;
@@ -62,6 +69,7 @@ interface OnboardingContextType {
   submitOnboarding: () => Promise<void>;
   getProgress: () => number;
   getSteps: () => OnboardingStep[];
+  calculateRisk: () => RiskAssessment;
 }
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
@@ -72,10 +80,37 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [accountType, setAccountTypeState] = useState<AccountType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [riskAssessment, setRiskAssessment] = useState<RiskAssessment | null>(null);
+  const [complianceResult, setComplianceResult] = useState<ComplianceResult | null>(null);
+  const [customerId, setCustomerId] = useState<string | null>(null);
+
+  // Ref to track if compliance check has been done (prevents double calls)
+  const complianceCheckDone = useRef(false);
+
+  const calculateRisk = useCallback((): RiskAssessment => {
+    const assessment = calculateRiskScore(data);
+    setRiskAssessment(assessment);
+    return assessment;
+  }, [data]);
 
   const getSteps = useCallback((): OnboardingStep[] => {
-    return accountType === 'zakelijk' ? BUSINESS_STEPS : INDIVIDUAL_STEPS;
-  }, [accountType]);
+    const baseSteps = accountType === 'zakelijk' ? BUSINESS_STEPS : INDIVIDUAL_STEPS;
+
+    // Calculate risk to determine if EDD step is needed
+    const risk = calculateRiskScore(data);
+
+    // Insert EDD step after BANK_ACCOUNT if medium or high risk
+    if (risk.riskLevel === 'medium' || risk.riskLevel === 'high') {
+      const bankAccountIndex = baseSteps.indexOf(OnboardingStep.BANK_ACCOUNT);
+      if (bankAccountIndex !== -1 && !baseSteps.includes(OnboardingStep.ENHANCED_DUE_DILIGENCE)) {
+        const stepsWithEDD = [...baseSteps];
+        stepsWithEDD.splice(bankAccountIndex + 1, 0, OnboardingStep.ENHANCED_DUE_DILIGENCE);
+        return stepsWithEDD;
+      }
+    }
+
+    return baseSteps;
+  }, [accountType, data]);
 
   const setAccountType = useCallback((type: AccountType) => {
     setAccountTypeState(type);
@@ -113,24 +148,48 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   }, [currentStep, getSteps]);
 
   const submitOnboarding = useCallback(async () => {
+    // Prevent double compliance checks
+    if (complianceCheckDone.current) {
+      console.warn('Compliance check already performed, skipping duplicate call');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
+
     try {
-      // In production, this would submit to the backend
       console.log('Submitting onboarding data:', data);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Generate customer ID if not already set
+      let currentCustomerId = customerId;
+      if (!currentCustomerId) {
+        currentCustomerId = generateCustomerId();
+        setCustomerId(currentCustomerId);
+      }
 
-      // Move to completed step
+      // Submit onboarding data AND get compliance decision in one call
+      // Backend determines: LOW_RISK → APPROVED, MEDIUM/HIGH_RISK → MANUAL_REVIEW
+      console.log('Submitting onboarding to compliance backend:', currentCustomerId);
+      const complianceCheckResult = await submitOnboardingForCompliance(currentCustomerId, data);
+
+      // Mark compliance check as done (prevents duplicate calls)
+      complianceCheckDone.current = true;
+
+      // Store the compliance result from backend
+      setComplianceResult(complianceCheckResult);
+
+      console.log('Backend compliance decision:', complianceCheckResult);
+
+      // Move to completed step (the CompletedStep will handle the display based on compliance status)
       setCurrentStep(OnboardingStep.COMPLETED);
     } catch (err) {
+      console.error('Onboarding submission error:', err);
       setError('Er is een fout opgetreden. Probeer het opnieuw.');
       throw err;
     } finally {
       setIsLoading(false);
     }
-  }, [data]);
+  }, [data, customerId]);
 
   return (
     <OnboardingContext.Provider
@@ -140,6 +199,9 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         accountType,
         isLoading,
         error,
+        riskAssessment,
+        complianceResult,
+        customerId,
         setAccountType,
         nextStep,
         prevStep,
@@ -148,6 +210,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         submitOnboarding,
         getProgress,
         getSteps,
+        calculateRisk,
       }}
     >
       {children}

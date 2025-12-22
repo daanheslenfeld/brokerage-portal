@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Check, ClipboardCheck, Edit2, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Check, ClipboardCheck, Edit2, Loader2, Shield, AlertTriangle } from 'lucide-react';
 import { useOnboarding, OnboardingStep } from '../../context/OnboardingContext';
+import { calculateRiskScore, getRiskColor, getRiskBgColor, getRiskLabel } from '../../utils/riskAssessment';
 
 export function ReviewStep() {
   const { data, prevStep, goToStep, submitOnboarding, isLoading } = useOnboarding();
   const [submitting, setSubmitting] = useState(false);
+  const [riskAssessment, setRiskAssessment] = useState<ReturnType<typeof calculateRiskScore> | null>(null);
+
+  useEffect(() => {
+    // Calculate risk assessment when component mounts
+    const assessment = calculateRiskScore(data);
+    setRiskAssessment(assessment);
+  }, [data]);
 
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -46,6 +54,51 @@ export function ReviewStep() {
         </p>
       </div>
 
+      {/* Risk Assessment Display */}
+      {riskAssessment && (
+        <div className={`${getRiskBgColor(riskAssessment.riskLevel)} border rounded-xl p-4 mb-6`}>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              {riskAssessment.riskLevel === 'low' ? (
+                <Shield className="w-5 h-5 text-green-400" />
+              ) : (
+                <AlertTriangle className={`w-5 h-5 ${getRiskColor(riskAssessment.riskLevel)}`} />
+              )}
+              <span className={`font-medium ${getRiskColor(riskAssessment.riskLevel)}`}>
+                {getRiskLabel(riskAssessment.riskLevel)}
+              </span>
+            </div>
+            <span className="text-gray-400 text-sm">Score: {riskAssessment.overallScore}/100</span>
+          </div>
+
+          {riskAssessment.riskLevel === 'low' && !riskAssessment.requiresManualReview ? (
+            <div className="flex items-center gap-2 text-green-400">
+              <Check className="w-4 h-4" />
+              <span className="text-sm">Laag risico profiel - je account wordt direct geactiveerd na indiening!</span>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-300">
+              Na indiening wordt je aanvraag beoordeeld. Bij een hoger risicoprofiel kan een handmatige review nodig zijn.
+            </p>
+          )}
+
+          {/* Risk Factors Summary */}
+          <div className="mt-3 pt-3 border-t border-white/10">
+            <p className="text-xs text-gray-500 mb-2">Verificatie punten:</p>
+            <div className="flex flex-wrap gap-2">
+              {riskAssessment.factors
+                .filter(f => f.score === 0)
+                .slice(0, 4)
+                .map((factor, i) => (
+                  <span key={i} className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded-full">
+                    ✓ {factor.category}
+                  </span>
+                ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Personal Data */}
       {data.personalData &&
         renderSection(
@@ -85,6 +138,37 @@ export function ReviewStep() {
           </>,
           OnboardingStep.ADDRESS
         )}
+
+      {/* ID Verification Status */}
+      {data.idDocument && (
+        <div className="bg-dark-surface rounded-xl p-4 mb-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-medium text-white">ID Verificatie</h3>
+            <span className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded-full">
+              ✓ Geverifieerd
+            </span>
+          </div>
+          <p className="text-gray-400 text-sm mt-2">
+            {data.idDocument.type === 'passport' ? 'Paspoort' :
+             data.idDocument.type === 'id_card' ? 'ID Kaart' : 'Rijbewijs'} geüpload en geverifieerd
+          </p>
+        </div>
+      )}
+
+      {/* Bank Account Status */}
+      {data.bankAccount && (
+        <div className="bg-dark-surface rounded-xl p-4 mb-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-medium text-white">Bankrekening</h3>
+            <span className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded-full">
+              ✓ Geverifieerd
+            </span>
+          </div>
+          <p className="text-gray-400 text-sm mt-2 font-mono">
+            {data.bankAccount.iban}
+          </p>
+        </div>
+      )}
 
       {/* Tax Status */}
       {data.taxStatus &&
@@ -182,12 +266,12 @@ export function ReviewStep() {
           {submitting ? (
             <>
               <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-              Indienen...
+              Verwerken...
             </>
           ) : (
             <>
               <Check className="w-5 h-5 mr-2" />
-              Aanvraag Indienen
+              {riskAssessment?.riskLevel === 'low' ? 'Account Activeren' : 'Aanvraag Indienen'}
             </>
           )}
         </button>

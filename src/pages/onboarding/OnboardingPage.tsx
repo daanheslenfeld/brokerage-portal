@@ -16,6 +16,7 @@ import { BankAccountStep } from '../../components/onboarding/BankAccountStep';
 import { AgreementStep } from '../../components/onboarding/AgreementStep';
 import { ReviewStep } from '../../components/onboarding/ReviewStep';
 import { CompletedStep } from '../../components/onboarding/CompletedStep';
+import { EnhancedDueDiligenceStep } from '../../components/onboarding/EnhancedDueDiligenceStep';
 
 const STEP_NAMES: Record<OnboardingStep, string> = {
   [OnboardingStep.ACCOUNT_TYPE]: 'Account Type',
@@ -28,6 +29,7 @@ const STEP_NAMES: Record<OnboardingStep, string> = {
   [OnboardingStep.SOURCE_OF_FUNDS]: 'Bron van Vermogen',
   [OnboardingStep.INVESTMENT_PROFILE]: 'Beleggingsprofiel',
   [OnboardingStep.BANK_ACCOUNT]: 'Bankrekening',
+  [OnboardingStep.ENHANCED_DUE_DILIGENCE]: 'Uitgebreide Verificatie',
   [OnboardingStep.AGREEMENT]: 'Overeenkomst',
   [OnboardingStep.REVIEW]: 'Controle',
   [OnboardingStep.COMPLETED]: 'Voltooid',
@@ -60,6 +62,8 @@ function OnboardingContent() {
         return <InvestmentProfileStep />;
       case OnboardingStep.BANK_ACCOUNT:
         return <BankAccountStep />;
+      case OnboardingStep.ENHANCED_DUE_DILIGENCE:
+        return <EnhancedDueDiligenceStep />;
       case OnboardingStep.AGREEMENT:
         return <AgreementStep />;
       case OnboardingStep.REVIEW:

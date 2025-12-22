@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, Check } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, Check, Phone, MapPin } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
+type RegistrationStep = 'details' | 'verification';
+
 export function RegisterPage() {
+  const [step, setStep] = useState<RegistrationStep>('details');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
+    phone: '',
+    street: '',
+    houseNumber: '',
+    postalCode: '',
+    city: '',
     password: '',
     confirmPassword: '',
     acceptTerms: false,
   });
+  const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '']);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [generatedCode, setGeneratedCode] = useState('');
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -26,7 +36,27 @@ export function RegisterPage() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCodeChange = (index: number, value: string) => {
+    if (value.length > 1) return;
+    const newCode = [...verificationCode];
+    newCode[index] = value;
+    setVerificationCode(newCode);
+
+    // Auto-focus next input
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`code-${index + 1}`);
+      nextInput?.focus();
+    }
+  };
+
+  const handleCodeKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !verificationCode[index] && index > 0) {
+      const prevInput = document.getElementById(`code-${index - 1}`);
+      prevInput?.focus();
+    }
+  };
+
+  const handleSubmitDetails = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -46,6 +76,54 @@ export function RegisterPage() {
       return;
     }
 
+    // Validate phone
+    if (!/^(\+31|0)[1-9][0-9]{8}$/.test(formData.phone.replace(/\s/g, ''))) {
+      setError('Voer een geldig Nederlands telefoonnummer in.');
+      return;
+    }
+
+    // Validate postal code
+    if (!/^[1-9][0-9]{3}\s?[A-Za-z]{2}$/.test(formData.postalCode)) {
+      setError('Voer een geldige postcode in (bijv. 1234 AB).');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Generate verification code
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      setGeneratedCode(code);
+
+      // Simulate sending email
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      console.log(`Verification code sent to ${formData.email}: ${code}`);
+
+      setStep('verification');
+    } catch {
+      setError('Er is een fout opgetreden. Probeer het opnieuw.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    const enteredCode = verificationCode.join('');
+
+    if (enteredCode.length !== 6) {
+      setError('Voer de volledige 6-cijferige code in.');
+      return;
+    }
+
+    if (enteredCode !== generatedCode) {
+      setError('Ongeldige verificatiecode. Probeer het opnieuw.');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -53,6 +131,18 @@ export function RegisterPage() {
       if (error) {
         setError('Registratie mislukt. Probeer een ander e-mailadres.');
       } else {
+        // Store user data
+        localStorage.setItem('userDetails', JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phone: formData.phone,
+          address: {
+            street: formData.street,
+            houseNumber: formData.houseNumber,
+            postalCode: formData.postalCode,
+            city: formData.city,
+          },
+        }));
         navigate('/onboarding');
       }
     } catch {
@@ -60,6 +150,14 @@ export function RegisterPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const resendCode = async () => {
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedCode(code);
+    console.log(`New verification code sent to ${formData.email}: ${code}`);
+    setVerificationCode(['', '', '', '', '', '']);
+    setError('');
   };
 
   // Password strength indicator
@@ -85,6 +183,83 @@ export function RegisterPage() {
 
   const passwordStrength = getPasswordStrength();
 
+  if (step === 'verification') {
+    return (
+      <div className="min-h-screen bg-dark-bg flex flex-col">
+        <header className="p-4">
+          <button
+            onClick={() => setStep('details')}
+            className="inline-flex items-center text-gray-400 hover:text-primary transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Terug
+          </button>
+        </header>
+
+        <div className="flex-1 flex items-center justify-center px-4 py-12">
+          <div className="w-full max-w-md text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/20 rounded-full mb-6">
+              <Mail className="w-8 h-8 text-primary" />
+            </div>
+
+            <h1 className="text-2xl font-bold text-white mb-2">Verifieer je e-mail</h1>
+            <p className="text-gray-400 mb-8">
+              We hebben een 6-cijferige code gestuurd naar<br />
+              <span className="text-white font-medium">{formData.email}</span>
+            </p>
+
+            <form onSubmit={handleVerifyCode} className="space-y-6">
+              {error && (
+                <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                  {error}
+                </div>
+              )}
+
+              <div className="flex justify-center gap-2">
+                {verificationCode.map((digit, index) => (
+                  <input
+                    key={index}
+                    id={`code-${index}`}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleCodeChange(index, e.target.value)}
+                    onKeyDown={(e) => handleCodeKeyDown(index, e)}
+                    className="w-12 h-14 text-center text-2xl font-bold bg-dark-card border border-dark-border rounded-lg text-white focus:border-primary focus:outline-none"
+                  />
+                ))}
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3 bg-primary text-dark-bg rounded-lg hover:bg-primary-dark transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? 'Verifiëren...' : 'Verifieer & Maak Account'}
+              </button>
+            </form>
+
+            <p className="mt-6 text-gray-400 text-sm">
+              Geen code ontvangen?{' '}
+              <button
+                onClick={resendCode}
+                className="text-primary hover:text-primary-dark font-medium"
+              >
+                Verstuur opnieuw
+              </button>
+            </p>
+
+            {/* Dev hint - remove in production */}
+            <p className="mt-4 text-xs text-gray-600">
+              (Test code: {generatedCode})
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-dark-bg flex flex-col">
       {/* Header */}
@@ -96,10 +271,10 @@ export function RegisterPage() {
       </header>
 
       {/* Main content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md">
+      <div className="flex-1 flex items-center justify-center px-4 py-8">
+        <div className="w-full max-w-lg">
           {/* Logo */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <Link to="/" className="inline-flex items-center justify-center">
               <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none">
                 <path
@@ -113,7 +288,7 @@ export function RegisterPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmitDetails} className="space-y-4">
             {error && (
               <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
                 {error}
@@ -124,7 +299,7 @@ export function RegisterPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-2">
-                  Voornaam
+                  Voornaam *
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -142,7 +317,7 @@ export function RegisterPage() {
               </div>
               <div>
                 <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-2">
-                  Achternaam
+                  Achternaam *
                 </label>
                 <input
                   id="lastName"
@@ -160,7 +335,7 @@ export function RegisterPage() {
             {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                E-mailadres
+                E-mailadres *
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -177,10 +352,82 @@ export function RegisterPage() {
               </div>
             </div>
 
+            {/* Phone */}
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
+                Telefoonnummer *
+              </label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full bg-dark-card border border-dark-border rounded-lg px-4 py-3 pl-10 text-white placeholder-gray-500 focus:border-primary focus:outline-none"
+                  placeholder="+31 6 12345678"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Address */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <MapPin className="inline w-4 h-4 mr-1" />
+                Adres *
+              </label>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="col-span-2">
+                  <input
+                    name="street"
+                    type="text"
+                    value={formData.street}
+                    onChange={handleChange}
+                    className="w-full bg-dark-card border border-dark-border rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:outline-none"
+                    placeholder="Straatnaam"
+                    required
+                  />
+                </div>
+                <div>
+                  <input
+                    name="houseNumber"
+                    type="text"
+                    value={formData.houseNumber}
+                    onChange={handleChange}
+                    className="w-full bg-dark-card border border-dark-border rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:outline-none"
+                    placeholder="Nr."
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                <input
+                  name="postalCode"
+                  type="text"
+                  value={formData.postalCode}
+                  onChange={handleChange}
+                  className="w-full bg-dark-card border border-dark-border rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:outline-none"
+                  placeholder="1234 AB"
+                  required
+                />
+                <input
+                  name="city"
+                  type="text"
+                  value={formData.city}
+                  onChange={handleChange}
+                  className="w-full bg-dark-card border border-dark-border rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:outline-none"
+                  placeholder="Plaats"
+                  required
+                />
+              </div>
+            </div>
+
             {/* Password */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                Wachtwoord
+                Wachtwoord *
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -223,7 +470,7 @@ export function RegisterPage() {
             {/* Confirm Password */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
-                Bevestig wachtwoord
+                Bevestig wachtwoord *
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -271,12 +518,12 @@ export function RegisterPage() {
               disabled={isLoading}
               className="w-full py-3 bg-primary text-dark-bg rounded-lg hover:bg-primary-dark transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Account aanmaken...' : 'Gratis Account Aanmaken'}
+              {isLoading ? 'E-mail versturen...' : 'Verificatie starten'}
             </button>
           </form>
 
           {/* Login link */}
-          <p className="mt-8 text-center text-gray-400">
+          <p className="mt-6 text-center text-gray-400">
             Al een account?{' '}
             <Link to="/login" className="text-primary hover:text-primary-dark font-medium">
               Log in

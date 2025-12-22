@@ -222,3 +222,18 @@ export interface ReviewNote {
   content: string;
   createdAt: string;
 }
+
+// Compliance types
+export type ComplianceStatus = 'APPROVED' | 'MANUAL_REVIEW' | 'REJECTED';
+
+export interface ComplianceResult {
+  status: ComplianceStatus;
+  eligible?: boolean;
+  reason?: string;
+  checked_at: string;
+  risk_score?: number;
+  risk_level?: string;
+}
+
+// Account activation status based on compliance
+export type AccountActivationStatus = 'pending' | 'active' | 'review' | 'blocked';

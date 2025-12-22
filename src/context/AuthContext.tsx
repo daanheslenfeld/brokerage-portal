@@ -18,7 +18,7 @@ const createMockUser = (email: string): User => ({
   firstName: 'Test',
   lastName: 'Gebruiker',
   accountType: 'free',
-  role: 'customer',
+  role: email.includes('admin') ? 'admin' : email.includes('manager') ? 'accountmanager' : 'customer',
   onboardingCompleted: false,
   onboardingApproved: false,
   createdAt: new Date().toISOString(),

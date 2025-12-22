@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(python main.py:*)",
+      "Bash(curl:*)",
+      "Bash(python init_tenant.py:*)",
+      "Bash(head:*)",
+      "Bash(ls:*)",
+      "Bash(python:*)",
+      "Bash(uvicorn main:app:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(pip install:*)",
+      "Bash(timeout:*)",
+      "Bash(tasklist:*)",
+      "Bash(del /F \"C:\\\\Users\\\\daanh\\\\OneDrive\\\\comp\\\\compliance.db\")",
+      "Bash(cat:*)",
+      "Bash(npx tsc:*)",
+      "Bash(dir /b \"C:\\\\Users\\\\daanh\\\\OneDrive\\\\comp\")",
+      "Bash(dir /b \"C:\\\\Users\\\\daanh\\\\OneDrive\\\\Desktop\\\\comp\")",
+      "Bash(dir /b \"C:\\\\Users\\\\daanh\\\\comp\")",
+      "Bash(echo \")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix risk assessment logic and ensure high-risk onboarding is classified correctly\n\n- Fix mapSourceOfWealth\\(\\) to properly map all frontend values \\(was defaulting to SALARY instead of OTHER\\)\n- Add comprehensive logging to risk assessment for debugging\n- Replace mock data in AdminUsersPage with real API calls to /portal/customers\n- Add new backend endpoint for fetching all customers regardless of status\n- Fix field name mismatches \\(weighted_score, calculated_at\\) in portal router\n- Make tenant_id optional in AuditLogResponse for SYSTEM events\n- Add external_id support to customer schemas\n\nRisk scoring now correctly applies:\n- PEP status: +50 points\n- Non-EU country: +30 points\n- High-risk source \\(LOTTERY, CRYPTO, OTHER\\): +20 points\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(git rebase:*)"
+    ]
+  }
+}

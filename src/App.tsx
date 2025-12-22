@@ -8,10 +8,22 @@ import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 import { DashboardPage } from './pages/dashboard/DashboardPage';
+import { ETFDatabasePage } from './pages/dashboard/ETFDatabasePage';
+import { PortfolioBuilderPage } from './pages/dashboard/PortfolioBuilderPage';
+import { ModelPortfoliosPage } from './pages/dashboard/ModelPortfoliosPage';
+import { ModelPortfolioDetailPage } from './pages/dashboard/ModelPortfolioDetailPage';
 import { OnboardingPage } from './pages/onboarding/OnboardingPage';
-import { ETFDatabasePage } from './pages/etfs/ETFDatabasePage';
+import { ETFDatabasePage as ETFsPage } from './pages/etfs/ETFDatabasePage';
 import { ETFDetailPage } from './pages/etfs/ETFDetailPage';
 import { TransactionsPage } from './pages/transactions/TransactionsPage';
+
+// Admin Pages
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
+import { AdminUsersPage } from './pages/admin/AdminUsersPage';
+import { AdminOnboardingPage } from './pages/admin/AdminOnboardingPage';
+import { AdminSettingsPage } from './pages/admin/AdminSettingsPage';
+import { ManualReviewsPage } from './pages/admin/ManualReviewsPage';
+import { ManualReviewDetailPage } from './pages/admin/ManualReviewDetailPage';
 
 // Protected Route component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -105,6 +117,38 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/dashboard/etf-database"
+        element={
+          <ProtectedRoute>
+            <ETFDatabasePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/portfolio-builder"
+        element={
+          <ProtectedRoute>
+            <PortfolioBuilderPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/model-portfolios"
+        element={
+          <ProtectedRoute>
+            <ModelPortfoliosPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/model-portfolios/:id"
+        element={
+          <ProtectedRoute>
+            <ModelPortfolioDetailPage />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Onboarding */}
       <Route
@@ -121,7 +165,7 @@ function AppRoutes() {
         path="/etfs"
         element={
           <ProtectedRoute>
-            <ETFDatabasePage />
+            <ETFsPage />
           </ProtectedRoute>
         }
       />
@@ -146,17 +190,60 @@ function AppRoutes() {
         }
       />
 
-      {/* Admin routes - TODO: implement */}
+      {/* Admin routes */}
       <Route
-        path="/admin/*"
+        path="/admin"
         element={
           <AdminRoute>
-            <div className="min-h-screen bg-dark-bg flex items-center justify-center text-white">
-              <div className="text-center">
-                <h1 className="text-2xl font-bold mb-4">Admin Portal</h1>
-                <p className="text-gray-400">Coming soon...</p>
-              </div>
-            </div>
+            <AdminDashboardPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <AdminRoute>
+            <AdminUsersPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/onboarding"
+        element={
+          <AdminRoute>
+            <AdminOnboardingPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/onboarding/:id"
+        element={
+          <AdminRoute>
+            <AdminOnboardingPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/settings"
+        element={
+          <AdminRoute>
+            <AdminSettingsPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/manual-reviews"
+        element={
+          <AdminRoute>
+            <ManualReviewsPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/manual-reviews/:id"
+        element={
+          <AdminRoute>
+            <ManualReviewDetailPage />
           </AdminRoute>
         }
       />
